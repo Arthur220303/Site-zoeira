@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chat Online</title>
+<title>Chat Online 😈</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -54,6 +54,7 @@ flex:1;
 padding:15px;
 border-radius:12px;
 border:none;
+font-size:16px;
 }
 
 button{
@@ -65,12 +66,14 @@ cursor:pointer;
 font-weight:bold;
 }
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 <h2>💬 Chat Online</h2>
+
 <div id="chat"></div>
 
 <div class="input-area">
@@ -81,17 +84,20 @@ font-weight:bold;
 
 <script>
 
+/* 🔥 SUPABASE CONFIG */
 const supabase = supabase.createClient(
 "https://wyomuufhdgakozungrcv.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5b211dWZoZGdha296dW5ncmN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMzU0MTcsImV4cCI6MjA4NzgxMTQxN30.EB74pyIesKC8XdzXar27p0_MI3iooo1muhiVqsY_XC4"
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5b211dWZoZGdha296dW5ncmN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMzU0MTcsImV4cCI6MjA4Nzg"
 );
+
+/* Nome usuário */
+let userName = localStorage.getItem("chatName") || "User";
 
 const chat = document.getElementById("chat");
 
-let userName = localStorage.getItem("chatName") || "User";
-
-/* carregar mensagens */
+/* Carregar mensagens */
 async function loadMessages(){
+
 const {data} = await supabase
 .from("messages")
 .select("*")
@@ -99,19 +105,21 @@ const {data} = await supabase
 
 chat.innerHTML="";
 
+if(data){
 data.forEach(m=>{
-let div=document.createElement("div");
+let div = document.createElement("div");
 div.className="msg";
 div.innerText = m.nome + ": " + m.texto;
 chat.appendChild(div);
 });
+}
 
 chat.scrollTop = chat.scrollHeight;
 }
 
 loadMessages();
 
-/* tempo real */
+/* Tempo real */
 supabase
 .channel("messages")
 .on("postgres_changes",
@@ -119,15 +127,20 @@ supabase
 ()=> loadMessages()
 ).subscribe();
 
-/* enviar */
+/* Enviar mensagem */
 async function sendMsg(){
-let text = document.getElementById("msg").value;
-if(text==="") return;
 
+let input = document.getElementById("msg");
+let text = input.value;
+
+if(text.trim()==="") return;
+
+/* comando mudar nome */
 if(text.startsWith("/nome ")){
 userName = text.replace("/nome ","");
 localStorage.setItem("chatName",userName);
 alert("Nome alterado!");
+input.value="";
 return;
 }
 
@@ -136,7 +149,7 @@ nome:userName,
 texto:text
 });
 
-document.getElementById("msg").value="";
+input.value="";
 }
 
 </script>
