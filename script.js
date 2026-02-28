@@ -1,41 +1,81 @@
+/* =========================
+ENVIAR MENSAGEM
+========================= */
+
 function enviar(){
 
 let msgInput = document.getElementById("msg");
-let msg = msgInput.value;
+let msg = msgInput.value.trim();
 
-if(msg.trim() === "") return;
+if(msg === "") return;
 
 let chat = document.getElementById("chat");
 
-/* comandos */
+/* Detectar comando */
 if(msg.startsWith("/")){
 msg = executarComando(msg);
-chat.innerHTML += `<p class="system">${msg}</p>`;
+chat.innerHTML += `
+<p class="system">${msg}</p>
+`;
 }
 else{
-chat.innerHTML += `<p class="user">${msg}</p>`;
+chat.innerHTML += `
+<p class="user">${msg}</p>
+`;
 }
+
+/* Som opcional (se tiver arquivo) */
+// new Audio("msg.mp3").play();
 
 msgInput.value="";
 chat.scrollTop = chat.scrollHeight;
+
 }
 
-/* comandos zoeira */
+/* =========================
+SISTEMA DE COMANDOS
+========================= */
+
 function executarComando(cmd){
+
+cmd = cmd.toLowerCase();
 
 switch(cmd){
 
 case "/help":
-return "📜 Comandos: /help /oi /fig";
+return `
+📜 Comandos:
+<br>/help
+<br>/oi
+<br>/fig
+<br>/clear
+`;
 
 case "/oi":
-return "😈 Oi, tudo bem?";
+return "😈 Oi! Tudo bem?";
 
 case "/fig":
-return "🖼️ Figura ativada!";
+return "🖼️ Comando fig ativado 😈";
+
+case "/clear":
+document.getElementById("chat").innerHTML =
+"<p class='system'>Chat limpo 🧹</p>";
+return "🧹 Chat limpo";
 
 default:
 return "❌ Comando não encontrado";
 }
 
 }
+
+/* =========================
+ENTER PARA ENVIAR
+========================= */
+
+document.addEventListener("keypress", function(e){
+
+if(e.key === "Enter"){
+enviar();
+}
+
+});
