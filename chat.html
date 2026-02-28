@@ -15,72 +15,50 @@
 
 <div class="container">
 
-<h2>💬 Chat Zoera</h2>
+<h2>😈 Chat Zoera Premium</h2>
 
+<!-- CHAT -->
 <div id="chat">
 <p class="system">👋 Chat iniciado!</p>
 </div>
 
+<!-- INPUT -->
 <div class="input-area">
-<input id="msg" type="text" placeholder="Digite uma mensagem...">
+<input id="msg" type="text" placeholder="Digite algo...">
 <button onclick="enviar()">Enviar</button>
+</div>
+
+<!-- COMANDOS -->
+<div class="comandos">
+
+<h3>📜 Comandos</h3>
+
+<p>/help</p>
+<p>/oi</p>
+<p>/fig</p>
+<p>/clear</p>
+
+</div>
+
+<!-- SONS -->
+<div class="comandos">
+
+<h3>🔊 Sons (opcional)</h3>
+
+<p>/sound15 - Som automático a cada 15s</p>
+<p>/soundstop - Parar som</p>
+
 </div>
 
 <br>
 
 <a href="index.html">
-<button style="width:100%">⬅ Voltar</button>
+<button>⬅ Voltar</button>
 </a>
 
 </div>
 
-<script>
-
-/* ===== FUNÇÃO ENVIAR MENSAGEM ===== */
-function enviar(){
-
-let msg = document.getElementById("msg").value;
-
-if(msg.trim() === "") return;
-
-/* ===== COMANDOS ZOEIRA BASE ===== */
-if(msg.startsWith("/")){
-msg = executarComando(msg);
-}
-
-/* Mostrar mensagem */
-let chat = document.getElementById("chat");
-
-chat.innerHTML += `<p>${msg}</p>`;
-
-/* Limpar input */
-document.getElementById("msg").value = "";
-
-/* Scroll automático */
-chat.scrollTop = chat.scrollHeight;
-}
-
-/* ===== SISTEMA DE COMANDOS (FÁCIL DE AUMENTAR) ===== */
-function executarComando(cmd){
-
-switch(cmd){
-
-case "/fig":
-return "🖼️ Comando figura ativado!";
-
-case "/oi":
-return "😈 Oi, tudo bem?";
-
-case "/help":
-return "📜 Comandos: /fig /oi /help";
-
-default:
-return "❌ Comando não encontrado";
-}
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
