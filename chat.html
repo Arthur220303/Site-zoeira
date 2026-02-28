@@ -3,62 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat FULL MAX</title>
 
-<title>Chat Zoera 😈</title>
+<style>
+:root {
+    --bg: #0f0f0f;
+    --chat: #1a1a1a;
+    --user: #00ff88;
+    --bot: #2a2a2a;
+    --text: white;
+}
 
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+body.light {
+    --bg: #f2f2f2;
+    --chat: #ffffff;
+    --user: #00cc66;
+    --bot: #dddddd;
+    --text: black;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    padding: 15px;
+    background: black;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1600px;
+    width: 100%;
+    margin: auto;
+    padding: 20px;
+}
+
+.chat-box {
+    flex: 1;
+    background: var(--chat);
+    border-radius: 15px;
+    padding: 20px;
+    overflow-y: auto;
+    font-size: 18px;
+}
+
+.chat-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+    background: #00ff88;
+    border-radius: 10px;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    max-width: 75%;
+    animation: fade 0.3s ease-in-out;
+}
+
+.user {
+    background: var(--user);
+    color: black;
+    align-self: flex-end;
+}
+
+.bot {
+    background: var(--bot);
+}
+
+.time {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 5px;
+}
+
+.input-area {
+    display: flex;
+    margin-top: 15px;
+}
+
+input {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+}
+
+button {
+    padding: 15px 25px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #00ff88;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.commands {
+    background: #111;
+    padding: 20px;
+    font-size: 15px;
+    border-top: 2px solid #00ff88;
+}
+
+.commands h3 {
+    margin-bottom: 10px;
+    color: #00ff88;
+}
+
+@keyframes fade {
+    from {opacity: 0; transform: translateY(5px);}
+    to {opacity: 1;}
+}
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<header>💬 CHAT FULL MAX</header>
 
-<h2>😈 Chat Zoera Premium</h2>
+<div class="chat-container">
+    <div class="chat-box" id="chatBox"></div>
 
-<!-- CHAT -->
-<div id="chat">
-<p class="system">👋 Chat iniciado!</p>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Digite algo...">
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
 </div>
 
-<!-- INPUT -->
-<div class="input-area">
-<input id="msg" type="text" placeholder="Digite algo...">
-<button onclick="enviar()">Enviar</button>
-</div>
-
-<!-- COMANDOS -->
-<div class="comandos">
-
+<div class="commands">
 <h3>📜 Comandos</h3>
-
-<p>/help</p>
-<p>/oi</p>
-<p>/fig</p>
-<p>/clear</p>
-
+<p>/help — lista comandos</p>
+<p>/hora — mostra hora</p>
+<p>/limpar — limpa chat</p>
+<p>/tema — alterna claro/escuro</p>
+<p>/nome NOVONOME — muda nome</p>
+<p>/contador — mostra total mensagens</p>
+<p>/som15 — toca som 15 segundos</p>
 </div>
 
-<!-- SONS -->
-<div class="comandos">
+<script>
+let chatBox = document.getElementById("chatBox");
+let input = document.getElementById("userInput");
 
-<h3>🔊 Sons (opcional)</h3>
+let userName = localStorage.getItem("chatName") || "Você";
+let messageCount = 0;
 
-<p>/sound15 - Som automático a cada 15s</p>
-<p>/soundstop - Parar som</p>
+window.onload = () => {
+    loadMessages();
+};
 
-</div>
+input.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+        sendMessage();
+    }
+});
 
-<br>
+function sendMessage(){
+    let text = input.value.trim();
+    if(text === "") return;
 
-<a href="index.html">
-<button>⬅ Voltar</button>
-</a>
+    addMessage(text, "user");
 
-</div>
+    handleCommand(text);
 
-<script src="script.js"></script>
+    input.value = "";
+}
+
+function handleCommand(text){
+    if(text === "/help"){
+        botReply("Comandos disponíveis: /hora /limpar /tema /nome /contador /som15");
+    }
+    else if(text === "/hora"){
+        botReply("Agora são " + new Date().toLocaleTimeString());
+    }
+    else if(text === "/limpar"){
+        chatBox.innerHTML = "";
+        localStorage.removeItem("chatHistory");
+    }
+    else if(text.startsWith("/nome ")){
+        let novo = text.replace("/nome ","");
+        userName = novo;
+        localStorage.setItem("chatName", novo);
+        botReply("Nome alterado para " + novo);
+    }
+    else if(text === "/tema"){
+        document.body.classList.toggle("light");
+    }
+    else if(text === "/contador"){
+        botReply("Total de mensagens: " + messageCount);
+    }
+    else if(text === "/som15"){
+        playSound(15);
+        botReply("🔊 Tocando som por 15 segundos...");
+    }
+    else{
+        setTimeout(()=>{
+            botReply("Comando não reconhecido.");
+        },500);
+    }
+}
+
+function addMessage(text, type){
+    let msg = document.createElement("div");
+    msg.classList.add("message", type);
+
+    let content = document.createElement("div");
+    content.textContent = (type === "user" ? userName + ": " : "Bot: ") + text;
+
+    let time = document.createElement("div");
+    time.classList.add("time");
+    time.textContent = new Date().toLocaleTimeString();
+
+    msg.appendChild(content);
+    msg.appendChild(time);
+
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    saveMessage(msg.outerHTML);
+    messageCount++;
+}
+
+function botReply(text){
+    addMessage(text,"bot");
+}
+
+function saveMessage(html){
+    let history = localStorage.getItem("chatHistory") || "";
+    history += html;
+    localStorage.setItem("chatHistory", history);
+}
+
+function loadMessages(){
+    let history = localStorage.getItem("chatHistory");
+    if(history){
+        chatBox.innerHTML = history;
+    }
+}
+
+function playSound(seconds){
+    let audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+    audio.play();
+    setTimeout(()=>{
+        audio.pause();
+        audio.currentTime = 0;
+    }, seconds * 1000);
+}
+</script>
 
 </body>
 </html>
