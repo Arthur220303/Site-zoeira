@@ -2,31 +2,144 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Thurtech Chat 😈</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+<title>Chat Online</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#020617;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+width:95%;
+max-width:900px;
+height:95vh;
+display:flex;
+flex-direction:column;
+}
+
+#chat{
+flex:1;
+background:#0f172a;
+padding:20px;
+border-radius:20px;
+overflow-y:auto;
+}
+
+.msg{
+padding:12px;
+margin:8px 0;
+background:#1e293b;
+border-radius:12px;
+}
+
+.input-area{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+input{
+flex:1;
+padding:15px;
+border-radius:12px;
+border:none;
+}
+
+button{
+padding:15px;
+border:none;
+border-radius:12px;
+background:#00ff88;
+cursor:pointer;
+font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
-
-<h2>😈 Thurtech Chat</h2>
-
-<div id="chat">
-<p class="system">👋 Bem vindo ao chat zoeira!</p>
-</div>
+<h2>💬 Chat Online</h2>
+<div id="chat"></div>
 
 <div class="input-area">
 <input id="msg" placeholder="Digite algo...">
-<button onclick="enviar()">Enviar</button>
+<button onclick="sendMsg()">Enviar</button>
+</div>
 </div>
 
-</div>
+<script>
 
-<script src="script.js"></script>
+const supabase = supabaseJs.createClient(
+"https://wyomuufhdgakozungrcv.supabase.co",
+"SUA_ANON_KEY_AQUI"
+);
+
+const chat = document.getElementById("chat");
+
+let userName = localStorage.getItem("chatName") || "User";
+
+/* carregar mensagens */
+async function loadMessages(){
+const {data} = await supabase
+.from("messages")
+.select("*")
+.order("created_at",{ascending:true});
+
+chat.innerHTML="";
+
+data.forEach(m=>{
+let div=document.createElement("div");
+div.className="msg";
+div.innerText = m.nome + ": " + m.texto;
+chat.appendChild(div);
+});
+
+chat.scrollTop = chat.scrollHeight;
+}
+
+loadMessages();
+
+/* tempo real */
+supabase
+.channel("messages")
+.on("postgres_changes",
+{event:"INSERT",schema:"public",table:"messages"},
+()=> loadMessages()
+).subscribe();
+
+/* enviar */
+async function sendMsg(){
+let text = document.getElementById("msg").value;
+if(text==="") return;
+
+if(text.startsWith("/nome ")){
+userName = text.replace("/nome ","");
+localStorage.setItem("chatName",userName);
+alert("Nome alterado!");
+return;
+}
+
+await supabase.from("messages").insert({
+nome:userName,
+texto:text
+});
+
+document.getElementById("msg").value="";
+}
+
+</script>
 
 </body>
 </html>
